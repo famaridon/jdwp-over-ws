@@ -57,23 +57,10 @@
 
   <build>
     <finalName>tcp-over-ws</finalName>
-    <pluginManagement>
-      <plugins>
-        <!-- The WildFly Maven Plugin deploys your war to a local WildFly container -->
-        <!-- To use, set the JBOSS_HOME environment variable and run:
-           mvn package wildfly:deploy -->
-        <plugin>
-          <groupId>org.wildfly.plugins</groupId>
-          <artifactId>wildfly-maven-plugin</artifactId>
-          <version>1.2.1.Final</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.2.2</version>
         <configuration>
           <archiveClasses>true</archiveClasses>
         </configuration>
