@@ -4,5 +4,5 @@ import java.nio.ByteBuffer;
 
 public interface MessageHandler {
 
-    void onMessage(ByteBuffer message);
+  void onMessage(ByteBuffer message);
 }

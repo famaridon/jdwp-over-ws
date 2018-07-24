@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 public interface WebSocketWrapper {
 
-    void addMessageHandler(MessageHandler handler);
-    void sendMessage(ByteBuffer message);
+  void addMessageHandler(MessageHandler handler);
+
+  void sendMessage(ByteBuffer message);
 }
