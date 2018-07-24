@@ -1,6 +1,5 @@
-## Code formatting
- 
+## Code style
 
-Use the [Google style guide](https://github.com/google/styleguide)
+This project use the [Google style guide](https://github.com/google/styleguide).
 
-https://raw.githubusercontent.com/google/styleguide/gh-pages/intellij-java-google-style.xml
+You can install this code style as describe https://github.com/HPI-Information-Systems/Metanome/wiki/Installing-the-google-styleguide-settings-in-intellij-and-eclipse 
