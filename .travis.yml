@@ -7,7 +7,20 @@ cache:
 install: # the build step
    - mvn clean install -B -V
 
+deploy:
+  provider: releases
+  api_key: $GITHUB_OAUTH_TOKEN
+  file_glob: true
+  file:
+  - "jdwp-over-ws-server/target/tcp-over-ws*.war"
+  - "jdwp-over-ws-client/target/jdwp-over-ws-client*.jar"
+  skip_cleanup: true
+  on:
+    tags: true
+
+
 notifications:
   email: # only receive email when the build status changes (someone broke the build!)
     on_failure: change
     on_success: change
+
