@@ -1,0 +1,13 @@
+language: java
+
+cache:
+  directories:
+  - $HOME/.m2
+
+install: # the build step
+   - mvn clean install -B -V
+
+notifications:
+  email: # only receive email when the build status changes (someone broke the build!)
+    on_failure: change
+    on_success: change
