@@ -2,6 +2,14 @@
 
 JDWP over Web Socket aim to help Java developer debugging on cloud environment. No need to open debugging port you can use the HTTP or HTTPS port.
 
+## Prerequisites
+
+* Enable web socket on revers proxies  
+* JDWP compatible debugger like Intellij/Eclipse/Netbeans
+
+## Downloads
+
+https://github.com/famaridon/jdwp-over-ws/releases // coming soon
 
 ## How dose it works?
 
@@ -11,9 +19,11 @@ All debug tcp traffic is forwarded over web socket.
 
 #### How dose it works
 
-This is the default use case. The jdwp-over-ws server get web socket and convert it to TCP.
+This is the best use case. The jdwp-over-ws server get web socket **ws://** or **wss://** on the current **http://** or **https://** listening port.
+You don't need to open new port or run an other process.
 
 ![schema-jee](resources/schema-jee.jpg)
+
 
 #### Installation
 
@@ -57,9 +67,3 @@ java -jar jdwp-over-ws-client-<version>-shaded.jar -p 9999 -r ws://localhost:808
 This project use the [Google style guide](https://github.com/google/styleguide).
 
 You can install this code style as describe https://github.com/HPI-Information-Systems/Metanome/wiki/Installing-the-google-styleguide-settings-in-intellij-and-eclipse 
-
-### Roadmap
-
-#### Client
-
-#### Server
