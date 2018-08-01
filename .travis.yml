@@ -1,8 +1,15 @@
 language: java
 
+env:
+  - MAVEN_POM_VERSION=
+
 cache:
   directories:
   - $HOME/.m2
+
+before_install:
+  - parse-pom.sh
+  - echo $MAVEN_POM_VERSION
 
 install: # the build step
    - mvn clean install -B -V
