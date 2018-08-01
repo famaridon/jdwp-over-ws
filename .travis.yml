@@ -9,7 +9,7 @@ cache:
 
 before_install:
   - ./travis-ci/parse-pom.sh
-  - echo $MAVEN_POM_VERSION
+  - echo "MAVEN_POM_VERSION=$MAVEN_POM_VERSION"
 
 install: # the build step
    - mvn clean install -B -V
