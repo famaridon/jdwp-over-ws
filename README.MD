@@ -9,7 +9,7 @@ JDWP over Web Socket aim to help Java developer debugging on cloud environment. 
 
 ## Downloads
 
-https://github.com/famaridon/jdwp-over-ws/releases // coming soon
+https://github.com/famaridon/jdwp-over-ws/releases
 
 ## How dose it works?
 
