@@ -29,6 +29,8 @@ deploy:
     api_key: $GITHUB_OAUTH_TOKEN
     file_glob: true
     draft: true
+    prerelease: true
+    overwrite: true
     name: $MAVEN_POM_VERSION
     tag_name: $MAVEN_POM_VERSION
     file:
