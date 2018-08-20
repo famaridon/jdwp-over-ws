@@ -56,6 +56,18 @@ Sample usage :
 java -jar jdwp-over-ws-client-<version>-shaded.jar -p 9999 -r ws://localhost:8080/tcp-over-ws/ws/tunnel -t <token> 
 ```
 
+## Roadmap
+
+### Client
+
+* support reconnexion without restart 
+* display information to see if it's working.
+
+### Server
+
+* add configuration based on file
+
+
 ## Developer guide
 
 ### Build 
