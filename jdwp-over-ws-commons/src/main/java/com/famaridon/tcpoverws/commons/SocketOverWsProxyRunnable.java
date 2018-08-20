@@ -18,6 +18,7 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
 
   private final WebSocketWrapper ws;
   private final ByteBuffer buffer;
+  private final StreamCount streamCount = new StreamCount();
 
   public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration,
       WebSocketWrapper ws) throws IOException {
@@ -49,6 +50,7 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
         LOGGER.debug("message read from socket {}", buffer);
         buffer.flip();
         ws.sendMessage(buffer);
+        //this.streamCount.addEmitted(buffer);
       }
     } catch (IOException e) {
       // TODO nicer exception handling
@@ -63,6 +65,7 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
     LOGGER.debug("message received from web socket {}", message);
     try {
       this.socket.write(message);
+      //this.streamCount.addRecived(message);
     } catch (IOException e) {
       LOGGER.error("Message received but can't be writing to debug", e);
     }
@@ -77,4 +80,7 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
     }
   }
 
+  public StreamCount getStreamCount() {
+    return streamCount;
+  }
 }
