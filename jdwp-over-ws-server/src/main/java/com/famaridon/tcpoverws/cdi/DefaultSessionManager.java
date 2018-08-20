@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultSessionManager implements SessionManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TunnelWebSocket.class);
+  public static final int DEFAULT_PORT = 5000;
+  public static final String DEFAULT_HOST = "localhost";
 
   @Resource
   private ManagedThreadFactory managedThreadFactory;
@@ -34,8 +36,8 @@ public class DefaultSessionManager implements SessionManager {
 
   // Configuration
   private String token;
-  private String host = "localhost";
-  private int port;
+  private String host = DEFAULT_HOST;
+  private int port = DEFAULT_PORT;
 
   @PostConstruct
   public void init() {
@@ -44,13 +46,6 @@ public class DefaultSessionManager implements SessionManager {
       this.token = RandomStringUtils.randomAlphanumeric(32);
     }
     LOGGER.info("Debug token is set to : {}", this.token);
-
-    String portVar = System.getenv("DEBUG_PORT");
-    if (StringUtils.isNotBlank(portVar)) {
-      this.port = Integer.parseInt(portVar);
-    } else {
-
-    }
   }
 
 
