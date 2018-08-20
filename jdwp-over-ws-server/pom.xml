@@ -53,13 +53,13 @@
   </dependencies>
 
   <build>
-    <finalName>tcp-over-ws</finalName>
+    <finalName>jdwp-over-ws</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <archiveClasses>true</archiveClasses>
+          <archiveClasses>false</archiveClasses>
         </configuration>
       </plugin>
     </plugins>
