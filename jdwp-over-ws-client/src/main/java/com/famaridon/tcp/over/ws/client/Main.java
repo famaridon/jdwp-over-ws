@@ -30,6 +30,8 @@ public class Main {
     options.addOption("p", "port", true, "the local listening port");
     options.addOption("r", "remote", true, "the remote web service url");
     options.addOption("t", "token", true, "the generated server token");
+    options.addOption(null, "disable-reconnect", false,
+        "if connexion fail will not wait for new connection");
     options.addOption("h", "help", false, "print the help");
 
     CommandLineParser parser = new DefaultParser();
@@ -45,28 +47,29 @@ public class Main {
     String remote = cmd.getOptionValue('r');
     String token = cmd.getOptionValue('t');
 
-    LOGGER.info("Listening on port {}", port);
-    WaitingConsoleThread waitingConsoleThread = new WaitingConsoleThread();
-    new Thread(waitingConsoleThread).start();
     ServerSocketChannel serverSocket = ServerSocketChannel.open();
     serverSocket.bind(new InetSocketAddress("localhost", port));
-    SocketChannel socket = serverSocket.accept();
-    waitingConsoleThread.stop();
+    LOGGER.info("Listening on port {}", port);
 
-    SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
+    while (!cmd.hasOption("disable-reconnect")) {
+      WaitingConsoleThread waitingConsoleThread = new WaitingConsoleThread();
+      new Thread(waitingConsoleThread).start();
+      SocketChannel socket = serverSocket.accept();
+      waitingConsoleThread.stop();
 
-    WebSocketHandlerClient client = WebSocketHandlerClient.newInstance(remote, token);
+      SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
 
-    try {
-      SocketOverWsProxyRunnable proxy = new SocketOverWsProxyRunnable(proxyConfiguration, socket,
-          new WebSocketClientWrapper(client));
-      Thread thread = new Thread(proxy);
-      thread.start();
-      thread.join();
-    } catch (IOException | InterruptedException e) {
-      throw new IllegalStateException(e);
+      WebSocketHandlerClient client = WebSocketHandlerClient.newInstance(remote, token);
+
+      try {
+        SocketOverWsProxyRunnable proxy = new SocketOverWsProxyRunnable(proxyConfiguration, socket,
+            new WebSocketClientWrapper(client));
+        Thread thread = new Thread(proxy);
+        thread.start();
+        thread.join();
+      } catch (IOException | InterruptedException e) {
+        throw new IllegalStateException(e);
+      }
     }
-
-
   }
 }

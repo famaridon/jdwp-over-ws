@@ -24,6 +24,7 @@ public class WaitingConsoleThread implements Runnable {
       Character character = this.waitingCharsQueue.poll();
       this.waitingCharsQueue.add(character);
       System.out.print("\r");
+      System.out.print("Waiting  for connection ");
       System.out.print(character);
       try {
         Thread.sleep(250);
