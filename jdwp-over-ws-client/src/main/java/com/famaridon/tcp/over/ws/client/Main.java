@@ -1,5 +1,6 @@
 package com.famaridon.tcp.over.ws.client;
 
+import com.famaridon.tcp.over.ws.client.console.WaitingConsoleThread;
 import com.famaridon.tcpoverws.commons.SocketOverWsProxyConfiguration;
 import com.famaridon.tcpoverws.commons.SocketOverWsProxyRunnable;
 import java.io.IOException;
@@ -45,9 +46,12 @@ public class Main {
     String token = cmd.getOptionValue('t');
 
     LOGGER.info("Listening on port {}", port);
+    WaitingConsoleThread waitingConsoleThread = new WaitingConsoleThread();
+    new Thread(waitingConsoleThread).start();
     ServerSocketChannel serverSocket = ServerSocketChannel.open();
     serverSocket.bind(new InetSocketAddress("localhost", port));
     SocketChannel socket = serverSocket.accept();
+    waitingConsoleThread.stop();
 
     SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
 
