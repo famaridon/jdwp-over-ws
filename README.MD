@@ -60,7 +60,7 @@ java -jar jdwp-over-ws-client-<version>-shaded.jar -p 9999 -r ws://localhost:808
 
 ### Client
 
-* support reconnexion without restart 
+* support reconnection without restart (in progress : feature/reconnection)
 * display information to see if it's working.
 
 ### Server
