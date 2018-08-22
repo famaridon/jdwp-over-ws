@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.SocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
   private final WebSocketWrapper ws;
   private final ByteBuffer buffer;
   private final StreamCount streamCount = new StreamCount();
+  private Thread runnableThread;
 
   public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration,
       WebSocketWrapper ws) throws IOException {
@@ -41,23 +43,29 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
 
   @Override
   public void run() {
-    Thread t = Thread.currentThread();
-    t.setName(SocketOverWsProxyConfiguration.class.getSimpleName() + "-Thread");
+    this.runnableThread = Thread.currentThread();
+    this.runnableThread.setName(SocketOverWsProxyConfiguration.class.getSimpleName() + "-Thread");
     try {
-      while (!t.isInterrupted()) {
+      while (!this.runnableThread.isInterrupted()) {
         buffer.clear();
         this.socket.read(this.buffer);
         LOGGER.debug("message read from socket {}", buffer);
         buffer.flip();
         ws.sendMessage(buffer);
-        //this.streamCount.addEmitted(buffer);
       }
+    } catch (ClosedByInterruptException e) {
+      // nothing to do we simply stop listening
     } catch (IOException e) {
       // TODO nicer exception handling
       throw new IllegalStateException(e);
     } finally {
       this.close();
     }
+  }
+
+  @Override
+  public void onOpen() {
+
   }
 
   @Override
@@ -68,6 +76,17 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
       //this.streamCount.addRecived(message);
     } catch (IOException e) {
       LOGGER.error("Message received but can't be writing to debug", e);
+    }
+  }
+
+  @Override
+  public void onError(Exception ex) {
+  }
+
+  @Override
+  public void onClose(int code, String reason, boolean remote) {
+    if(this.runnableThread != null) {
+      this.runnableThread.interrupt();
     }
   }
 

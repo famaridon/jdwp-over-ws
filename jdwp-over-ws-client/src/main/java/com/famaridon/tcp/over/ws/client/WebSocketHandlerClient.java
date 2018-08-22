@@ -44,6 +44,7 @@ public class WebSocketHandlerClient extends WebSocketClient implements Closeable
       this.ready = true;
       this.readyLock.notifyAll();
     }
+    this.handlers.forEach((h) -> h.onOpen());
   }
 
   public void addMessageHandler(MessageHandler handler) {
@@ -52,7 +53,7 @@ public class WebSocketHandlerClient extends WebSocketClient implements Closeable
 
   @Override
   public void onClose(int code, String reason, boolean remote) {
-    LOGGER.info("Tunnel closed {}.", reason);
+    this.handlers.forEach((h) -> h.onClose(code,reason,remote));
   }
 
   @Override
@@ -67,7 +68,7 @@ public class WebSocketHandlerClient extends WebSocketClient implements Closeable
 
   @Override
   public void onError(Exception ex) {
-    LOGGER.error("WebSocket error", ex);
+    this.handlers.forEach((h) -> h.onError(ex));
   }
 
   public void waitReady() throws InterruptedException {
