@@ -58,14 +58,7 @@ java -jar jdwp-over-ws-client-<version>-shaded.jar -p 9999 -r ws://localhost:808
 
 ## Roadmap
 
-### Client
-
-* support reconnection without restart (donne)
-* display information to see if it's working.
-
-### Server
-
-* add configuration based on file
+https://github.com/famaridon/jdwp-over-ws/milestones
 
 
 ## Developer guide
