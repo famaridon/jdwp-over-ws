@@ -58,7 +58,6 @@ public class Main {
       waitingConsoleThread.stop();
 
       SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
-
       WebSocketHandlerClient client = WebSocketHandlerClient.newInstance(remote, token);
 
       try {
