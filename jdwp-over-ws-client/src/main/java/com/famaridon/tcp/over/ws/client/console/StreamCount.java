@@ -1,4 +1,4 @@
-package com.famaridon.tcpoverws.commons;
+package com.famaridon.tcp.over.ws.client.console;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicLong;

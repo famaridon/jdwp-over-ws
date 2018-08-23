@@ -1,11 +1,15 @@
 package com.famaridon.tcpoverws.commons;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SocketOverWsProxyConfiguration {
 
   private String host = "127.0.0.0";
   private int port = 5005;
   private int bufferSize = 2048;
   private int threadCheckInterrupt = 1000;
+  private List<ProxyListener> proxyListeners = new ArrayList<>();
 
   public String getHost() {
     return host;
@@ -37,5 +41,13 @@ public class SocketOverWsProxyConfiguration {
 
   public void setThreadCheckInterrupt(int threadCheckInterrupt) {
     this.threadCheckInterrupt = threadCheckInterrupt;
+  }
+
+  public boolean addProxyListener(ProxyListener proxyListener) {
+    return this.proxyListeners.add(proxyListener);
+  }
+
+  public List<ProxyListener> getProxyListeners() {
+    return proxyListeners;
   }
 }
