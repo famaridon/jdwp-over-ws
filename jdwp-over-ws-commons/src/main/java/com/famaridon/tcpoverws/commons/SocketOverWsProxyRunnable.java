@@ -48,7 +48,6 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
       while (!this.runnableThread.isInterrupted()) {
         buffer.clear();
         this.socket.read(this.buffer);
-        LOGGER.debug("message read from socket {}", buffer);
         buffer.flip();
         ws.sendMessage(buffer);
         this.configuration.getProxyListeners().forEach(proxyListener -> proxyListener.onEmmitToWebSocket(buffer.asReadOnlyBuffer()));
@@ -70,7 +69,6 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
 
   @Override
   public void onMessage(ByteBuffer message) {
-    LOGGER.debug("message received from web socket {}", message);
     try {
       this.socket.write(message);
       this.configuration.getProxyListeners().forEach(proxyListener -> proxyListener.onReceiveFromWebSocket(buffer.asReadOnlyBuffer()));
