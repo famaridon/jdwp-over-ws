@@ -64,26 +64,31 @@ public class Main {
       ScheduledFuture<?> waittingTask = consoleTimmer
           .scheduleAtFixedRate(new WaitingConsoleThread(), 0, 250, TimeUnit.MILLISECONDS);
       SocketChannel socket = serverSocket.accept();
+      socket.configureBlocking(true);
       waittingTask.cancel(false);
 
       SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
       StreamCountProxyListener streamCountProxyListener = new StreamCountProxyListener();
       proxyConfiguration.addProxyListener(streamCountProxyListener);
-      ScheduledFuture<?> streamCountTask = consoleTimmer
-          .scheduleAtFixedRate(new StreamCountConsoleThread(streamCountProxyListener), 0, 250,
-              TimeUnit.MILLISECONDS);
-
+      proxyConfiguration.setSocket(socket);
       WebSocketHandlerClient client = WebSocketHandlerClient.newInstance(remote, token);
+      proxyConfiguration.setWebsocket(new WebSocketClientWrapper(client));
+
+      ScheduledFuture<?> streamCountTask = null;
       try {
-        SocketOverWsProxyRunnable proxy = new SocketOverWsProxyRunnable(proxyConfiguration, socket,
-            new WebSocketClientWrapper(client));
+        SocketOverWsProxyRunnable proxy = new SocketOverWsProxyRunnable(proxyConfiguration);
         Thread thread = new Thread(proxy);
         thread.start();
+        streamCountTask = consoleTimmer
+            .scheduleAtFixedRate(new StreamCountConsoleThread(streamCountProxyListener), 0, 250,
+                TimeUnit.MILLISECONDS);
         thread.join();
       } catch (IOException | InterruptedException e) {
         throw new IllegalStateException(e);
       } finally {
-        streamCountTask.cancel(false);
+        if (streamCountTask != null) {
+          streamCountTask.cancel(false);
+        }
       }
     }
   }

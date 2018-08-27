@@ -1,30 +1,30 @@
 package com.famaridon.tcpoverws.commons;
 
+import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SocketOverWsProxyConfiguration {
 
-  private String host = "127.0.0.0";
-  private int port = 5005;
+  private SocketChannel socket;
+  private WebSocketWrapper websocket;
   private int bufferSize = 2048;
-  private int threadCheckInterrupt = 1000;
   private List<ProxyListener> proxyListeners = new ArrayList<>();
 
-  public String getHost() {
-    return host;
+  public SocketChannel getSocket() {
+    return socket;
   }
 
-  public void setHost(String host) {
-    this.host = host;
+  public void setSocket(SocketChannel socket) {
+    this.socket = socket;
   }
 
-  public int getPort() {
-    return port;
+  public WebSocketWrapper getWebsocket() {
+    return websocket;
   }
 
-  public void setPort(int port) {
-    this.port = port;
+  public void setWebsocket(WebSocketWrapper websocket) {
+    this.websocket = websocket;
   }
 
   public int getBufferSize() {
@@ -35,12 +35,9 @@ public class SocketOverWsProxyConfiguration {
     this.bufferSize = bufferSize;
   }
 
-  public int getThreadCheckInterrupt() {
-    return threadCheckInterrupt;
-  }
-
-  public void setThreadCheckInterrupt(int threadCheckInterrupt) {
-    this.threadCheckInterrupt = threadCheckInterrupt;
+  public void setProxyListeners(
+      List<ProxyListener> proxyListeners) {
+    this.proxyListeners = proxyListeners;
   }
 
   public boolean addProxyListener(ProxyListener proxyListener) {

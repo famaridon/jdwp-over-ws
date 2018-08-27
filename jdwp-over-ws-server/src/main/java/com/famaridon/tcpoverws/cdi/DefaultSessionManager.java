@@ -6,6 +6,8 @@ import com.famaridon.tcpoverws.exceptions.DebugSocketException;
 import com.famaridon.tcpoverws.exceptions.SingletonLockedException;
 import com.famaridon.tcpoverws.ws.TunnelWebSocket;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
@@ -62,19 +64,20 @@ public class DefaultSessionManager implements SessionManager {
     this.session = session;
     LOGGER.info("Session lock tack by {}", session.getId());
 
-    SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
-    proxyConfiguration.setHost(this.host);
-    proxyConfiguration.setPort(this.port);
-
     try {
-      this.proxy = new SocketOverWsProxyRunnable(proxyConfiguration,
-          new JSR356WebSocketWrapper(this.session));
+      SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
+      SocketChannel socket = SocketChannel.open(new InetSocketAddress(this.host,this.port));
+      socket.configureBlocking(true);
+      proxyConfiguration.setSocket(socket);
+      proxyConfiguration.setWebsocket( new JSR356WebSocketWrapper(this.session));
+      this.proxy = new SocketOverWsProxyRunnable(proxyConfiguration);
+      this.thread = this.managedThreadFactory.newThread(this.proxy);
+      this.thread.start();
     } catch (IOException e) {
       throw new DebugSocketException("Can't open debug socket", e);
     }
 
-    this.thread = this.managedThreadFactory.newThread(this.proxy);
-    this.thread.start();
+
   }
 
   @Override

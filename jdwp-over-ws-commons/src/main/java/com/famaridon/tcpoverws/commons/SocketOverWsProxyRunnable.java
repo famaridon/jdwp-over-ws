@@ -21,21 +21,10 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
   private final ByteBuffer buffer;
   private Thread runnableThread;
 
-  public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration,
-      WebSocketWrapper ws) throws IOException {
+  public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration) throws IOException {
     this.configuration = configuration;
-    this.socket = SocketChannel.open();
-    this.socket.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-    this.ws = ws;
-    this.buffer = ByteBuffer.allocate(this.configuration.getBufferSize());
-    this.ws.addMessageHandler(this);
-  }
-
-  public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration,
-      SocketChannel socket, WebSocketWrapper ws) throws IOException {
-    this.configuration = configuration;
-    this.ws = ws;
-    this.socket = socket;
+    this.ws = this.configuration.getWebsocket();
+    this.socket = this.configuration.getSocket();
     this.buffer = ByteBuffer.allocate(this.configuration.getBufferSize());
     this.ws.addMessageHandler(this);
   }
@@ -49,8 +38,8 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
         buffer.clear();
         this.socket.read(this.buffer);
         buffer.flip();
-        ws.sendMessage(buffer);
         this.configuration.getProxyListeners().forEach(proxyListener -> proxyListener.onEmmitToWebSocket(buffer.asReadOnlyBuffer()));
+        ws.sendMessage(buffer);
       }
     } catch (ClosedByInterruptException e) {
       // nothing to do we simply stop listening
@@ -70,8 +59,8 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
   @Override
   public void onMessage(ByteBuffer message) {
     try {
+      this.configuration.getProxyListeners().forEach(proxyListener -> proxyListener.onReceiveFromWebSocket(message.asReadOnlyBuffer()));
       this.socket.write(message);
-      this.configuration.getProxyListeners().forEach(proxyListener -> proxyListener.onReceiveFromWebSocket(buffer.asReadOnlyBuffer()));
     } catch (IOException e) {
       LOGGER.error("Message received but can't be writing to debug", e);
     }
