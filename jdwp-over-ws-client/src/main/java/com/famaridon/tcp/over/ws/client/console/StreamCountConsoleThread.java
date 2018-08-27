@@ -16,7 +16,7 @@ public class StreamCountConsoleThread implements Runnable {
     System.out.print("\r");
     System.out.print(String.format("WebSocket : received %1d o | emitted %2d o",
         this.streamCountProxyListener.getReceivedFromWebSocket(),
-        this.streamCountProxyListener.getReceivedFromWebSocket()));
+        this.streamCountProxyListener.getEmittedToWebSocket()));
 
   }
 
