@@ -2,12 +2,12 @@ package com.famaridon.tcp.over.ws.client.console;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.TimerTask;
 
 public class WaitingConsoleThread implements Runnable {
 
   private static final char[] WAITTING_CHARS = {'/', '-', '\\'};
 
-  private boolean waiting = true;
   private final Queue<Character> waitingCharsQueue;
 
   public WaitingConsoleThread() {
@@ -20,26 +20,11 @@ public class WaitingConsoleThread implements Runnable {
 
   @Override
   public void run() {
-    while (this.isWaiting()) {
-      Character character = this.waitingCharsQueue.poll();
-      this.waitingCharsQueue.add(character);
-      System.out.print("\r");
-      System.out.print("Waiting  for connection ");
-      System.out.print(character);
-      try {
-        Thread.sleep(250);
-      } catch (InterruptedException e) {
-        this.waiting = false;
-      }
-    }
+    Character character = this.waitingCharsQueue.poll();
+    this.waitingCharsQueue.add(character);
     System.out.print("\r");
+    System.out.print("Waiting  for connection ");
+    System.out.print(character);
   }
 
-  public boolean isWaiting() {
-    return waiting;
-  }
-
-  public void stop() {
-    this.waiting = false;
-  }
 }
