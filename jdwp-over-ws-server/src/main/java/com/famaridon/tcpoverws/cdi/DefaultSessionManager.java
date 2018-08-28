@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultSessionManager implements SessionManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TunnelWebSocket.class);
-  public static final int DEFAULT_PORT = 5000;
+  public static final int DEFAULT_PORT = 8787;
   public static final String DEFAULT_HOST = "localhost";
 
   @Resource
