@@ -46,10 +46,12 @@ Display help :
 java -jar jdwp-over-ws-client-<version>-shaded.jar -h
 
 usage: cli
- -h,--help           print the help
- -p,--port <arg>     the local listening port
- -r,--remote <arg>   the remote web service url
- -t,--token <arg>    the generated server token
+    --disable-reconnect   if connexion fail will not wait for new
+                          connection
+ -h,--help                print the help
+ -p,--port <arg>          the local listening port
+ -r,--remote <arg>        the remote web service url
+ -t,--token <arg>         the generated server token
 ```
 
 Sample usage :
