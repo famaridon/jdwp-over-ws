@@ -1,5 +1,7 @@
 # JDWP over Web Socket 
 
+[![Build Status](https://travis-ci.org/famaridon/jdwp-over-ws.svg?branch=develop)](https://travis-ci.org/famaridon/jdwp-over-ws)
+
 JDWP over Web Socket aim to help Java developer debugging on cloud environment. No need to open debugging port you can use the HTTP or HTTPS port.
 
 ## Prerequisites
