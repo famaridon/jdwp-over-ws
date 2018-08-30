@@ -1,0 +1,6 @@
+server:
+  security:
+    token: "${env:DEBUG_TOKEN}"
+  remote-debug:
+    host: "127.0.0.1"
+    port: 5005

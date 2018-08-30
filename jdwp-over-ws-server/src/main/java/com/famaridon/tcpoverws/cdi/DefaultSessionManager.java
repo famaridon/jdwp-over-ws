@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.concurrent.ManagedThreadFactory;
+import javax.inject.Inject;
 import javax.websocket.Session;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,11 +25,12 @@ import org.slf4j.LoggerFactory;
 public class DefaultSessionManager implements SessionManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TunnelWebSocket.class);
-  public static final int DEFAULT_PORT = 8787;
-  public static final String DEFAULT_HOST = "localhost";
 
   @Resource
   private ManagedThreadFactory managedThreadFactory;
+
+  @Inject
+  private ConfigurationService configurationService;
 
   private Session session;
 
@@ -38,16 +40,19 @@ public class DefaultSessionManager implements SessionManager {
 
   // Configuration
   private String token;
-  private String host = DEFAULT_HOST;
-  private int port = DEFAULT_PORT;
+  private String host;
+  private int port;
 
   @PostConstruct
   public void init() {
-    this.token = System.getenv("DEBUG_TOKEN");
+    this.token = this.configurationService.getConfiguration().getString("server.security.token");
     if (StringUtils.isBlank(this.token)) {
       this.token = RandomStringUtils.randomAlphanumeric(32);
     }
     LOGGER.info("Debug token is set to : {}", this.token);
+
+    this.host = this.configurationService.getConfiguration().getString("server.remote-debug.host");
+    this.port = this.configurationService.getConfiguration().getInt("server.remote-debug.port");
   }
 
 
@@ -66,10 +71,10 @@ public class DefaultSessionManager implements SessionManager {
 
     try {
       SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
-      SocketChannel socket = SocketChannel.open(new InetSocketAddress(this.host,this.port));
+      SocketChannel socket = SocketChannel.open(new InetSocketAddress(this.host, this.port));
       socket.configureBlocking(true);
       proxyConfiguration.setSocket(socket);
-      proxyConfiguration.setWebsocket( new JSR356WebSocketWrapper(this.session));
+      proxyConfiguration.setWebsocket(new JSR356WebSocketWrapper(this.session));
       this.proxy = new SocketOverWsProxyRunnable(proxyConfiguration);
       this.thread = this.managedThreadFactory.newThread(this.proxy);
       this.thread.start();
