@@ -40,21 +40,25 @@ public class DefaultConfigurationService implements ConfigurationService {
   private ImmutableHierarchicalConfiguration configuration;
 
   @PostConstruct
-  public void init() throws ConfigurationException {
+  public void init() {
 
-    NodeCombiner combiner = new MergeCombiner();
-    CombinedConfiguration combinedConfiguration = new CombinedConfiguration(combiner);
+    try {
+      NodeCombiner combiner = new MergeCombiner();
+      CombinedConfiguration combinedConfiguration = new CombinedConfiguration(combiner);
 
-    // check if JDWP_OVER_WS_CONF is set and use it
-    this.loadEnvironmentVariableConfigurationFile(combinedConfiguration);
-    // search jdwp-over-ws.yaml in working directory
-    this.loadWorkingDirectoryConfigurationFile(combinedConfiguration);
-    // search jdwp-over-ws.yaml in classpath
-    this.loadClasspathVariableConfigurationFile(combinedConfiguration);
-    // load jdwp-over-ws-default.yaml
-    this.loadDefaultVariableConfigurationFile(combinedConfiguration);
+      // check if JDWP_OVER_WS_CONF is set and use it
+      this.loadEnvironmentVariableConfigurationFile(combinedConfiguration);
+      // search jdwp-over-ws.yaml in working directory
+      this.loadWorkingDirectoryConfigurationFile(combinedConfiguration);
+      // search jdwp-over-ws.yaml in classpath
+      this.loadClasspathVariableConfigurationFile(combinedConfiguration);
+      // load jdwp-over-ws-default.yaml
+      this.loadDefaultVariableConfigurationFile(combinedConfiguration);
 
-    this.configuration = ConfigurationUtils.unmodifiableConfiguration(combinedConfiguration);
+      this.configuration = ConfigurationUtils.unmodifiableConfiguration(combinedConfiguration);
+    }catch (ConfigurationException e ) {
+      throw new IllegalStateException("Configuration can't be loaded",e);
+    }
 
   }
 
