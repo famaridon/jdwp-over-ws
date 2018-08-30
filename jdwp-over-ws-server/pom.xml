@@ -57,7 +57,18 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-configuration2</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-vfs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
