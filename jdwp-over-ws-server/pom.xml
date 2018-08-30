@@ -62,10 +62,6 @@
       <artifactId>snakeyaml</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-vfs</artifactId>
-    </dependency>
-    <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
     </dependency>
@@ -78,7 +74,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <archiveClasses>false</archiveClasses>
+          <archiveClasses>true</archiveClasses>
         </configuration>
       </plugin>
     </plugins>

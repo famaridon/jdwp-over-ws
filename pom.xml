@@ -92,11 +92,6 @@
         <version>${version.snakeyaml}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-vfs</artifactId>
-        <version>${version.commons-vfs}</version>
-      </dependency>
-      <dependency>
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
         <version>${version.commons-beanutils}</version>
