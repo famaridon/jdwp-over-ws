@@ -1,5 +1,8 @@
 package com.famaridon.tcp.over.ws.client;
 
+import com.famaridon.tcp.over.ws.client.console.StreamCountConsoleThread;
+import com.famaridon.tcp.over.ws.client.console.StreamCountProxyListener;
+import com.famaridon.tcp.over.ws.client.console.WaitingConsoleThread;
 import com.famaridon.tcpoverws.commons.SocketOverWsProxyConfiguration;
 import com.famaridon.tcpoverws.commons.SocketOverWsProxyRunnable;
 import java.io.IOException;
@@ -7,6 +10,10 @@ import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -29,6 +36,8 @@ public class Main {
     options.addOption("p", "port", true, "the local listening port");
     options.addOption("r", "remote", true, "the remote web service url");
     options.addOption("t", "token", true, "the generated server token");
+    options.addOption(null, "disable-reconnect", false,
+        "if connexion fail will not wait for new connection");
     options.addOption("h", "help", false, "print the help");
 
     CommandLineParser parser = new DefaultParser();
@@ -44,25 +53,43 @@ public class Main {
     String remote = cmd.getOptionValue('r');
     String token = cmd.getOptionValue('t');
 
-    LOGGER.info("Listening on port {}", port);
     ServerSocketChannel serverSocket = ServerSocketChannel.open();
     serverSocket.bind(new InetSocketAddress("localhost", port));
-    SocketChannel socket = serverSocket.accept();
+    LOGGER.info("Listening on port {}", port);
 
-    SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
+    ScheduledExecutorService consoleTimmer = Executors.newScheduledThreadPool(1);
 
-    WebSocketHandlerClient client = WebSocketHandlerClient.newInstance(remote, token);
+    while (!cmd.hasOption("disable-reconnect")) {
+      // wait for connexion
+      ScheduledFuture<?> waittingTask = consoleTimmer
+          .scheduleAtFixedRate(new WaitingConsoleThread(), 0, 250, TimeUnit.MILLISECONDS);
+      SocketChannel socket = serverSocket.accept();
+      socket.configureBlocking(true);
+      waittingTask.cancel(false);
 
-    try {
-      SocketOverWsProxyRunnable proxy = new SocketOverWsProxyRunnable(proxyConfiguration, socket,
-          new WebSocketClientWrapper(client));
-      Thread thread = new Thread(proxy);
-      thread.start();
-      thread.join();
-    } catch (IOException | InterruptedException e) {
-      throw new IllegalStateException(e);
+      SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
+      StreamCountProxyListener streamCountProxyListener = new StreamCountProxyListener();
+      proxyConfiguration.addProxyListener(streamCountProxyListener);
+      proxyConfiguration.setSocket(socket);
+      WebSocketHandlerClient client = WebSocketHandlerClient.newInstance(remote, token);
+      proxyConfiguration.setWebsocket(new WebSocketClientWrapper(client));
+
+      ScheduledFuture<?> streamCountTask = null;
+      try {
+        SocketOverWsProxyRunnable proxy = new SocketOverWsProxyRunnable(proxyConfiguration);
+        Thread thread = new Thread(proxy);
+        thread.start();
+        streamCountTask = consoleTimmer
+            .scheduleAtFixedRate(new StreamCountConsoleThread(streamCountProxyListener), 0, 250,
+                TimeUnit.MILLISECONDS);
+        thread.join();
+      } catch (IOException | InterruptedException e) {
+        throw new IllegalStateException(e);
+      } finally {
+        if (streamCountTask != null) {
+          streamCountTask.cancel(false);
+        }
+      }
     }
-
-
   }
 }

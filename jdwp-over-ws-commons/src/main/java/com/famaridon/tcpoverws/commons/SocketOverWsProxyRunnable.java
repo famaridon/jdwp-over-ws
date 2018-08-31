@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.SocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,38 +19,30 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
 
   private final WebSocketWrapper ws;
   private final ByteBuffer buffer;
+  private Thread runnableThread;
 
-  public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration,
-      WebSocketWrapper ws) throws IOException {
+  public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration) throws IOException {
     this.configuration = configuration;
-    this.socket = SocketChannel.open();
-    this.socket.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-    this.ws = ws;
-    this.buffer = ByteBuffer.allocate(this.configuration.getBufferSize());
-    this.ws.addMessageHandler(this);
-  }
-
-  public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration,
-      SocketChannel socket, WebSocketWrapper ws) throws IOException {
-    this.configuration = configuration;
-    this.ws = ws;
-    this.socket = socket;
+    this.ws = this.configuration.getWebsocket();
+    this.socket = this.configuration.getSocket();
     this.buffer = ByteBuffer.allocate(this.configuration.getBufferSize());
     this.ws.addMessageHandler(this);
   }
 
   @Override
   public void run() {
-    Thread t = Thread.currentThread();
-    t.setName(SocketOverWsProxyConfiguration.class.getSimpleName() + "-Thread");
+    this.runnableThread = Thread.currentThread();
+    this.runnableThread.setName(SocketOverWsProxyConfiguration.class.getSimpleName() + "-Thread");
     try {
-      while (!t.isInterrupted()) {
+      while (!this.runnableThread.isInterrupted()) {
         buffer.clear();
         this.socket.read(this.buffer);
-        LOGGER.debug("message read from socket {}", buffer);
         buffer.flip();
+        this.configuration.getProxyListeners().forEach(proxyListener -> proxyListener.onEmmitToWebSocket(buffer.asReadOnlyBuffer()));
         ws.sendMessage(buffer);
       }
+    } catch (ClosedByInterruptException e) {
+      // nothing to do we simply stop listening
     } catch (IOException e) {
       // TODO nicer exception handling
       throw new IllegalStateException(e);
@@ -59,12 +52,28 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
   }
 
   @Override
+  public void onOpen() {
+
+  }
+
+  @Override
   public void onMessage(ByteBuffer message) {
-    LOGGER.debug("message received from web socket {}", message);
     try {
+      this.configuration.getProxyListeners().forEach(proxyListener -> proxyListener.onReceiveFromWebSocket(message.asReadOnlyBuffer()));
       this.socket.write(message);
     } catch (IOException e) {
       LOGGER.error("Message received but can't be writing to debug", e);
+    }
+  }
+
+  @Override
+  public void onError(Exception ex) {
+  }
+
+  @Override
+  public void onClose(int code, String reason, boolean remote) {
+    if(this.runnableThread != null) {
+      this.runnableThread.interrupt();
     }
   }
 

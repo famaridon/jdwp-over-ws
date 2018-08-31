@@ -6,11 +6,14 @@ import com.famaridon.tcpoverws.exceptions.DebugSocketException;
 import com.famaridon.tcpoverws.exceptions.SingletonLockedException;
 import com.famaridon.tcpoverws.ws.TunnelWebSocket;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.concurrent.ManagedThreadFactory;
+import javax.inject.Inject;
 import javax.websocket.Session;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +29,9 @@ public class DefaultSessionManager implements SessionManager {
   @Resource
   private ManagedThreadFactory managedThreadFactory;
 
+  @Inject
+  private ConfigurationService configurationService;
+
   private Session session;
 
   private SocketOverWsProxyRunnable proxy;
@@ -34,23 +40,19 @@ public class DefaultSessionManager implements SessionManager {
 
   // Configuration
   private String token;
-  private String host = "localhost";
+  private String host;
   private int port;
 
   @PostConstruct
   public void init() {
-    this.token = System.getenv("DEBUG_TOKEN");
+    this.token = this.configurationService.getConfiguration().getString("server.security.token");
     if (StringUtils.isBlank(this.token)) {
       this.token = RandomStringUtils.randomAlphanumeric(32);
     }
     LOGGER.info("Debug token is set to : {}", this.token);
 
-    String portVar = System.getenv("DEBUG_PORT");
-    if (StringUtils.isNotBlank(portVar)) {
-      this.port = Integer.parseInt(portVar);
-    } else {
-
-    }
+    this.host = this.configurationService.getConfiguration().getString("server.remote-debug.host");
+    this.port = this.configurationService.getConfiguration().getInt("server.remote-debug.port");
   }
 
 
@@ -67,19 +69,20 @@ public class DefaultSessionManager implements SessionManager {
     this.session = session;
     LOGGER.info("Session lock tack by {}", session.getId());
 
-    SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
-    proxyConfiguration.setHost(this.host);
-    proxyConfiguration.setPort(this.port);
-
     try {
-      this.proxy = new SocketOverWsProxyRunnable(proxyConfiguration,
-          new JSR356WebSocketWrapper(this.session));
+      SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
+      SocketChannel socket = SocketChannel.open(new InetSocketAddress(this.host, this.port));
+      socket.configureBlocking(true);
+      proxyConfiguration.setSocket(socket);
+      proxyConfiguration.setWebsocket(new JSR356WebSocketWrapper(this.session));
+      this.proxy = new SocketOverWsProxyRunnable(proxyConfiguration);
+      this.thread = this.managedThreadFactory.newThread(this.proxy);
+      this.thread.start();
     } catch (IOException e) {
       throw new DebugSocketException("Can't open debug socket", e);
     }
 
-    this.thread = this.managedThreadFactory.newThread(this.proxy);
-    this.thread.start();
+
   }
 
   @Override

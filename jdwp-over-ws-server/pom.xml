@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.famaridon</groupId>
     <artifactId>jdwp-over-ws</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0</version>
   </parent>
 
   <groupId>com.famaridon</groupId>
@@ -38,42 +38,41 @@
       <version>7.0</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
-    </dependency>
+
     <dependency>
       <groupId>com.famaridon</groupId>
       <artifactId>jdwp-over-ws-commons</artifactId>
-      <version>1.0-SNAPSHOT</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-configuration2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
     </dependency>
   </dependencies>
 
   <build>
-    <finalName>tcp-over-ws</finalName>
-    <pluginManagement>
-      <plugins>
-        <!-- The WildFly Maven Plugin deploys your war to a local WildFly container -->
-        <!-- To use, set the JBOSS_HOME environment variable and run:
-           mvn package wildfly:deploy -->
-        <plugin>
-          <groupId>org.wildfly.plugins</groupId>
-          <artifactId>wildfly-maven-plugin</artifactId>
-          <version>1.2.1.Final</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <finalName>jdwp-over-ws</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.2.2</version>
         <configuration>
           <archiveClasses>true</archiveClasses>
         </configuration>
