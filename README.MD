@@ -33,10 +33,27 @@ Simply add the jdwp-over-ws.war to your JEE server.
 
 #### Configuration
 
-You must set environment variable 
+Configuration search for YAML files in this order:
+* if JDWP_OVER_WS_CONF environment variable is set and file exist (if not found WARN log)
+* if jdwp-over-ws.yaml exist in working directory
+* if jdwp-over-ws.yaml exist in classpath
+* always jdwp-over-ws-default.yaml in classpath for default configuration 
 
-* **DEBUG_PORT** (mandatory): set the port to debug
-* **DEBUG_TOKEN** : set the debug token. If not set one is generated and logged as INFO level
+All files are merged and the first overwrite the second, the second overwrite the third, ... 
+
+Default configuration ```jdwp-over-ws-default.yaml``` is like this.
+
+```yaml
+server:
+  security:
+    token: "${env:DEBUG_TOKEN}"
+  remote-debug:
+    host: "127.0.0.1"
+    port: 5005
+```
+
+Note you can force **server.security.token** by setting **DEBUG_TOKEN** environment variable.
+
 
 ## Client usage
 
