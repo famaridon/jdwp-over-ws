@@ -4,7 +4,7 @@
 
   <groupId>com.famaridon</groupId>
   <artifactId>jdwp-over-ws</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -38,7 +38,7 @@
 
   <scm>
     <connection>scm:git:https://github.com/famaridon/jdwp-over-ws.git</connection>
-    <tag>jdwp-over-ws-0.1.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <build>
