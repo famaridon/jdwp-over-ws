@@ -25,20 +25,20 @@ deploy:
     on:
       tags: true
       branch: master
-#  - provider: releases
-#    api_key: $GITHUB_OAUTH_TOKEN
-#    file_glob: true
-#    draft: true
-#    prerelease: true
-#    overwrite: true
-#    name: $MAVEN_POM_VERSION
-#    tag_name: $MAVEN_POM_VERSION
-#    file:
-#    - "jdwp-over-ws-server/target/tcp-over-ws*.war"
-#    - "jdwp-over-ws-client/target/jdwp-over-ws-client*.jar"
-#    skip_cleanup: true
-#    on:
-#      branch: develop
+  - provider: releases
+    api_key: $GITHUB_OAUTH_TOKEN
+    file_glob: true
+    draft: true
+    prerelease: true
+    name: $MAVEN_POM_VERSION
+    tag_name: $MAVEN_POM_VERSION
+    file:
+    - "jdwp-over-ws-server/target/tcp-over-ws*.war"
+    - "jdwp-over-ws-client/target/jdwp-over-ws-client*.jar"
+    skip_cleanup: true
+    on:
+      branch: master
+      tags: true
 
 
 notifications:
