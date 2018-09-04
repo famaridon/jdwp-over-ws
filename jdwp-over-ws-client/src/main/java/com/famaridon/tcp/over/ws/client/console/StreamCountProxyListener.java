@@ -25,7 +25,7 @@ public class StreamCountProxyListener implements ProxyListener {
   }
 
   private BigInteger getByteBufferSize(ByteBuffer byteBuffer) {
-    return BigInteger.valueOf(byteBuffer.limit() - byteBuffer.position());
+    return BigInteger.valueOf((long)byteBuffer.limit() - (long)byteBuffer.position());
   }
 
   public BigInteger getReceivedFromWebSocket() {
