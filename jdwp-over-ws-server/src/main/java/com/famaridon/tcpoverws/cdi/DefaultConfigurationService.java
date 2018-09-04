@@ -1,29 +1,21 @@
 package com.famaridon.tcpoverws.cdi;
 
 import com.famaridon.tcpoverws.configuration.NonNullEnvironmentLookup;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import org.apache.commons.configuration2.CombinedConfiguration;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.ConfigurationDecoder;
 import org.apache.commons.configuration2.ConfigurationUtils;
-import org.apache.commons.configuration2.ImmutableConfiguration;
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.apache.commons.configuration2.YAMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.interpol.ConfigurationInterpolator;
-import org.apache.commons.configuration2.sync.NoOpSynchronizer;
 import org.apache.commons.configuration2.tree.MergeCombiner;
 import org.apache.commons.configuration2.tree.NodeCombiner;
 import org.apache.commons.lang3.StringUtils;
@@ -61,8 +53,8 @@ public class DefaultConfigurationService implements ConfigurationService {
       interpolator.registerLookup("nnenv", new NonNullEnvironmentLookup());
 
       this.configuration = ConfigurationUtils.unmodifiableConfiguration(combinedConfiguration);
-    }catch (ConfigurationException e ) {
-      throw new IllegalStateException("Configuration can't be loaded",e);
+    } catch (ConfigurationException e) {
+      throw new IllegalStateException("Configuration can't be loaded", e);
     }
 
   }

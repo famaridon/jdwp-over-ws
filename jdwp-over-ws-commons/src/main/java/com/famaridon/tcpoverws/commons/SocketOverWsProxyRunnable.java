@@ -2,7 +2,6 @@ package com.famaridon.tcpoverws.commons;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.SocketChannel;
@@ -21,7 +20,8 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
   private final ByteBuffer buffer;
   private Thread runnableThread;
 
-  public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration) throws IOException {
+  public SocketOverWsProxyRunnable(SocketOverWsProxyConfiguration configuration)
+      throws IOException {
     this.configuration = configuration;
     this.ws = this.configuration.getWebsocket();
     this.socket = this.configuration.getSocket();
@@ -38,7 +38,8 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
         buffer.clear();
         this.socket.read(this.buffer);
         buffer.flip();
-        this.configuration.getProxyListeners().forEach(proxyListener -> proxyListener.onEmmitToWebSocket(buffer.asReadOnlyBuffer()));
+        this.configuration.getProxyListeners()
+            .forEach(proxyListener -> proxyListener.onEmmitToWebSocket(buffer.asReadOnlyBuffer()));
         ws.sendMessage(buffer);
       }
     } catch (ClosedByInterruptException e) {
@@ -59,7 +60,8 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
   @Override
   public void onMessage(ByteBuffer message) {
     try {
-      this.configuration.getProxyListeners().forEach(proxyListener -> proxyListener.onReceiveFromWebSocket(message.asReadOnlyBuffer()));
+      this.configuration.getProxyListeners().forEach(
+          proxyListener -> proxyListener.onReceiveFromWebSocket(message.asReadOnlyBuffer()));
       this.socket.write(message);
     } catch (IOException e) {
       LOGGER.error("Message received but can't be writing to debug", e);
@@ -72,7 +74,7 @@ public class SocketOverWsProxyRunnable implements Runnable, Closeable, MessageHa
 
   @Override
   public void onClose(int code, String reason, boolean remote) {
-    if(this.runnableThread != null) {
+    if (this.runnableThread != null) {
       this.runnableThread.interrupt();
     }
   }

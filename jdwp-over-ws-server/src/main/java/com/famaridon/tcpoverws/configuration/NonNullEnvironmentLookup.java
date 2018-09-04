@@ -7,7 +7,7 @@ public class NonNullEnvironmentLookup implements Lookup {
   @Override
   public Object lookup(String key) {
     String value = System.getenv(key);
-    if(value == null) {
+    if (value == null) {
       value = "";
     }
     return value;

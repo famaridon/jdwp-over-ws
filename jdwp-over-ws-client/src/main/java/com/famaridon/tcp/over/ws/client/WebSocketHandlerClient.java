@@ -53,7 +53,7 @@ public class WebSocketHandlerClient extends WebSocketClient implements Closeable
 
   @Override
   public void onClose(int code, String reason, boolean remote) {
-    this.handlers.forEach((h) -> h.onClose(code,reason,remote));
+    this.handlers.forEach((h) -> h.onClose(code, reason, remote));
   }
 
   @Override

@@ -2,7 +2,6 @@ package com.famaridon.tcp.over.ws.client.console;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.TimerTask;
 
 public class WaitingConsoleThread implements Runnable {
 

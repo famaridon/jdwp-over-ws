@@ -35,16 +35,16 @@ public class SocketOverWsProxyConfiguration {
     this.bufferSize = bufferSize;
   }
 
-  public void setProxyListeners(
-      List<ProxyListener> proxyListeners) {
-    this.proxyListeners = proxyListeners;
-  }
-
   public boolean addProxyListener(ProxyListener proxyListener) {
     return this.proxyListeners.add(proxyListener);
   }
 
   public List<ProxyListener> getProxyListeners() {
     return proxyListeners;
+  }
+
+  public void setProxyListeners(
+      List<ProxyListener> proxyListeners) {
+    this.proxyListeners = proxyListeners;
   }
 }
