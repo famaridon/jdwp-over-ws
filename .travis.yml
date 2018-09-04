@@ -20,7 +20,7 @@ deploy:
     file_glob: true
     draft: true
     file:
-    - "jdwp-over-ws-server/target/jdwp-over-ws-$MAVEN_POM_VERSION.war"
+    - "jdwp-over-ws-server/target/jdwp-over-ws.war"
     - "jdwp-over-ws-server/target/jdwp-over-ws-$MAVEN_POM_VERSION+thorntail.jar"
     - "jdwp-over-ws-client/target/jdwp-over-ws-client-$MAVEN_POM_VERSION.jar"
     - "jdwp-over-ws-client/target/jdwp-over-ws-client-$MAVEN_POM_VERSION+shade.jar"
