@@ -53,41 +53,42 @@ public class Main {
     String remote = cmd.getOptionValue('r');
     String token = cmd.getOptionValue('t');
 
-    ServerSocketChannel serverSocket = ServerSocketChannel.open();
-    serverSocket.bind(new InetSocketAddress("localhost", port));
-    LOGGER.info("Listening on port {}", port);
+    try (ServerSocketChannel serverSocket = ServerSocketChannel.open()) {
+      serverSocket.bind(new InetSocketAddress("localhost", port));
+      LOGGER.info("Listening on port {}", port);
 
-    ScheduledExecutorService consoleTimmer = Executors.newScheduledThreadPool(1);
+      ScheduledExecutorService consoleTimmer = Executors.newScheduledThreadPool(1);
 
-    while (!cmd.hasOption("disable-reconnect")) {
-      // wait for connexion
-      ScheduledFuture<?> waittingTask = consoleTimmer
-          .scheduleAtFixedRate(new WaitingConsoleThread(), 0, 250, TimeUnit.MILLISECONDS);
-      SocketChannel socket = serverSocket.accept();
-      socket.configureBlocking(true);
-      waittingTask.cancel(false);
+      while (!cmd.hasOption("disable-reconnect")) {
+        // wait for connexion
+        ScheduledFuture<?> waittingTask = consoleTimmer
+            .scheduleAtFixedRate(new WaitingConsoleThread(), 0, 250, TimeUnit.MILLISECONDS);
+        SocketChannel socket = serverSocket.accept();
+        socket.configureBlocking(true);
+        waittingTask.cancel(false);
 
-      SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
-      StreamCountProxyListener streamCountProxyListener = new StreamCountProxyListener();
-      proxyConfiguration.addProxyListener(streamCountProxyListener);
-      proxyConfiguration.setSocket(socket);
-      WebSocketHandlerClient client = WebSocketHandlerClient.newInstance(remote, token);
-      proxyConfiguration.setWebsocket(new WebSocketClientWrapper(client));
+        SocketOverWsProxyConfiguration proxyConfiguration = new SocketOverWsProxyConfiguration();
+        StreamCountProxyListener streamCountProxyListener = new StreamCountProxyListener();
+        proxyConfiguration.addProxyListener(streamCountProxyListener);
+        proxyConfiguration.setSocket(socket);
+        WebSocketHandlerClient client = WebSocketHandlerClient.newInstance(remote, token);
+        proxyConfiguration.setWebsocket(new WebSocketClientWrapper(client));
 
-      ScheduledFuture<?> streamCountTask = null;
-      try {
-        SocketOverWsProxyRunnable proxy = new SocketOverWsProxyRunnable(proxyConfiguration);
-        Thread thread = new Thread(proxy);
-        thread.start();
-        streamCountTask = consoleTimmer
-            .scheduleAtFixedRate(new StreamCountConsoleThread(streamCountProxyListener), 0, 250,
-                TimeUnit.MILLISECONDS);
-        thread.join();
-      } catch (IOException | InterruptedException e) {
-        throw new IllegalStateException(e);
-      } finally {
-        if (streamCountTask != null) {
-          streamCountTask.cancel(false);
+        ScheduledFuture<?> streamCountTask = null;
+        try {
+          SocketOverWsProxyRunnable proxy = new SocketOverWsProxyRunnable(proxyConfiguration);
+          Thread thread = new Thread(proxy);
+          thread.start();
+          streamCountTask = consoleTimmer
+              .scheduleAtFixedRate(new StreamCountConsoleThread(streamCountProxyListener), 0, 250,
+                  TimeUnit.MILLISECONDS);
+          thread.join();
+        } catch (IOException | InterruptedException e) {
+          throw new IllegalStateException(e);
+        } finally {
+          if (streamCountTask != null) {
+            streamCountTask.cancel(false);
+          }
         }
       }
     }
