@@ -11,8 +11,8 @@ public class StreamCountProxyListener implements ProxyListener {
 
   private static final Logger LOG = LoggerFactory.getLogger(StreamCountProxyListener.class);
 
-  public AtomicReference<BigInteger> receivedFromWebSocket = new AtomicReference<>(BigInteger.ZERO);
-  public AtomicReference<BigInteger> emittedToWebSocket = new AtomicReference<>(BigInteger.ZERO);
+  private AtomicReference<BigInteger> receivedFromWebSocket = new AtomicReference<>(BigInteger.ZERO);
+  private AtomicReference<BigInteger> emittedToWebSocket = new AtomicReference<>(BigInteger.ZERO);
 
   @Override
   public void onReceiveFromWebSocket(ByteBuffer byteBuffer) {
