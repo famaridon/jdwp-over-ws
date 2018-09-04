@@ -79,6 +79,9 @@
             <goals>
               <goal>package</goal>
             </goals>
+            <configuration>
+              <finalName>jdwp-over-ws-${project.version}+thorntail</finalName>
+            </configuration>
           </execution>
         </executions>
       </plugin>
