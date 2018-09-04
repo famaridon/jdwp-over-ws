@@ -83,7 +83,10 @@ public class Main {
               .scheduleAtFixedRate(new StreamCountConsoleThread(streamCountProxyListener), 0, 250,
                   TimeUnit.MILLISECONDS);
           thread.join();
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          throw new IllegalStateException(e);
+        } catch (IOException  e) {
           throw new IllegalStateException(e);
         } finally {
           if (streamCountTask != null) {

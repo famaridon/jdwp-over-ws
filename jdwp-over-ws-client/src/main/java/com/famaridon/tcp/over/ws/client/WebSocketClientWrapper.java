@@ -23,6 +23,8 @@ public class WebSocketClientWrapper implements WebSocketWrapper {
     try {
       this.client.waitReady();
     } catch (InterruptedException e) {
+      // Restore interrupted state...
+      Thread.currentThread().interrupt();
       throw new IllegalStateException(e);
     }
     this.client.send(message);
