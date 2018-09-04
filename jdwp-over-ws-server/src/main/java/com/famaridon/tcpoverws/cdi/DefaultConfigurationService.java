@@ -1,5 +1,6 @@
 package com.famaridon.tcpoverws.cdi;
 
+import com.famaridon.tcpoverws.configuration.NonNullEnvironmentLookup;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
@@ -21,6 +22,7 @@ import org.apache.commons.configuration2.YAMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.interpol.ConfigurationInterpolator;
 import org.apache.commons.configuration2.sync.NoOpSynchronizer;
 import org.apache.commons.configuration2.tree.MergeCombiner;
 import org.apache.commons.configuration2.tree.NodeCombiner;
@@ -54,6 +56,9 @@ public class DefaultConfigurationService implements ConfigurationService {
       this.loadClasspathVariableConfigurationFile(combinedConfiguration);
       // load jdwp-over-ws-default.yaml
       this.loadDefaultVariableConfigurationFile(combinedConfiguration);
+
+      ConfigurationInterpolator interpolator = combinedConfiguration.getInterpolator();
+      interpolator.registerLookup("nnenv", new NonNullEnvironmentLookup());
 
       this.configuration = ConfigurationUtils.unmodifiableConfiguration(combinedConfiguration);
     }catch (ConfigurationException e ) {
