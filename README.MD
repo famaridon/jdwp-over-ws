@@ -3,6 +3,13 @@
 [![Build Status](https://travis-ci.org/famaridon/jdwp-over-ws.svg?branch=develop)](https://travis-ci.org/famaridon/jdwp-over-ws)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=com.famaridon%3Ajdwp-over-ws&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.famaridon%3Ajdwp-over-ws)
 
+Sonar status : 
+![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.famaridon%3Ajdwp-over-ws&metric=bugs)
+![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=com.famaridon%3Ajdwp-over-ws&metric=code_smells)
+![Duplicated Lines](https://sonarcloud.io/api/project_badges/measure?project=com.famaridon%3Ajdwp-over-ws&metric=duplicated_lines_density)
+![Lines of code](https://sonarcloud.io/api/project_badges/measure?project=com.famaridon%3Ajdwp-over-ws&metric=ncloc)
+![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=com.famaridon%3Ajdwp-over-ws&metric=sqale_rating)
+![Security rating](https://sonarcloud.io/api/project_badges/measure?project=com.famaridon%3Ajdwp-over-ws&metric=security_rating)
 
 JDWP over Web Socket aim to help Java developer debugging on cloud environment. No need to open debugging port you can use the HTTP or HTTPS port.
 
