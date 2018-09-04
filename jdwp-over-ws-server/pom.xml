@@ -71,10 +71,22 @@
     <finalName>jdwp-over-ws</finalName>
     <plugins>
       <plugin>
+        <groupId>io.thorntail</groupId>
+        <artifactId>thorntail-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>package</id>
+            <goals>
+              <goal>package</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <archiveClasses>true</archiveClasses>
+          <archiveClasses>false</archiveClasses>
         </configuration>
       </plugin>
     </plugins>
